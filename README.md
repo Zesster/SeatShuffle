@@ -6,10 +6,13 @@ A React-based interactive classroom seating arrangement application that allows 
 
 This application provides an intuitive interface for teachers to:
 - Create customizable classroom seating grids
+- Drag and drop desks to populate the classroom layout
+- Drag and drop students onto desks
 - Assign students to seats randomly
 - Shuffle existing seat assignments
-- Manually rearrange students using drag-and-drop
+- Manually rearrange desks and students using drag-and-drop
 - Visualize the classroom layout
+- Persist all changes automatically
 
 ## ✨ Features
 
@@ -23,18 +26,32 @@ This application provides an intuitive interface for teachers to:
 - **Shuffle**: Redistributes already-assigned students to different seats while keeping the same students in the grid
 
 ### 🖱️ Drag-and-Drop Interface
-- Intuitive drag-and-drop functionality to swap students between seats
+- **Drag Desks**: Drag the desk icon from the sidebar to any empty grid cell to place a desk
+- **Drag Students**: Drag students from the list onto desks to assign them
+- **Move Desks**: Drag desks within the grid to rearrange the classroom layout
+- **Swap Students**: Drag students between desks to swap their positions
+- **Lock Students**: Click on an occupied desk to lock/unlock the student (locked students won't be shuffled or moved)
+- **Remove Desks**: Double-click on an empty desk to remove it from the grid
 - Visual feedback when dragging (opacity change) and hovering over drop targets (color change)
+- Color-coded drop zones: orange for valid drops, red for invalid drops
+- Locked desks show a 🔒 icon and red border with glow effect
 - Smooth interaction using React DnD library
 
 ### 📊 Student Management
 - View complete list of students in the sidebar
-- Visual distinction between occupied seats (green) and empty seats (gray)
-- Displays student first names on occupied seats
+- Assigned students are marked with a checkmark and crossed out
+- Unassigned students can be dragged onto desks
+- Visual distinction between:
+  - Empty grid cells (light gray with dashed border)
+  - Empty desks (beige with solid border and chair emoji 🪑)
+  - Occupied desks (green with student's first name)
 
 ### 💾 Persistent Storage
 - **Auto-save**: Automatically saves the current seating arrangement and grid configuration to browser's localStorage
 - **Auto-load**: Restores the last saved arrangement when you reload the page
+- **Save Layouts**: Save multiple named classroom layouts (e.g., "Monday Morning", "Group Work", "Exam Setup")
+- **Load Layouts**: Quickly switch between saved layouts
+- **Manage Layouts**: View, load, and delete saved layouts from the configuration panel
 - **Clear Data**: Option to reset and clear all saved data from the configuration menu
 
 ## 🛠️ Technology Stack
@@ -83,20 +100,40 @@ npm run preview
 1. **Configure the Grid**
    - Click the hamburger menu (☰) in the top-left corner
    - Set the desired number of rows and columns
-   - Click "Applica" (Apply) to update the grid
+   - Click "Applica" (Apply) to create an empty grid
 
-2. **Assign Students**
-   - Use "Assegna Random" to randomly assign all students to seats
-   - Use "Shuffle" to redistribute already-assigned students
+2. **Add Desks to the Classroom**
+   - Drag the desk icon (🪑) from the sidebar
+   - Drop it onto any empty grid cell
+   - Repeat to add as many desks as needed
 
-3. **Manual Arrangement**
-   - Click and drag any occupied seat
-   - Drop it onto another seat to swap the students
-   - Visual feedback shows valid drop targets
+3. **Assign Students to Desks**
+   - **Manual Assignment**: Drag a student from the list and drop them onto a desk
+   - **Random Assignment**: Click "Assegna Random" to randomly assign unassigned students to empty desks
+   - **Shuffle**: Click "Shuffle" to redistribute already-assigned students among existing desks
 
-4. **Data Persistence**
-   - Your seating arrangement is automatically saved
+4. **Lock/Unlock Students**
+   - **Lock**: Click on a desk with a student to lock them in place
+   - **Visual**: Locked desks show a 🔒 icon and red border
+   - **Protection**: Locked students won't be moved during shuffle or drag operations
+
+5. **Rearrange the Classroom**
+   - **Move Desks**: Drag a desk (with or without a student) to a new position
+   - **Swap Students**: Drag a student from one desk to another (if not locked)
+   - **Remove Desks**: Double-click on an empty desk to remove it
+
+6. **Save and Load Layouts**
+   - Click "💾 Salva Disposizione Corrente" in the menu
+   - Enter a name for your layout (e.g., "Monday Setup")
+   - Your layout is saved and can be loaded anytime
+   - Locked students are saved with the layout
+   - View all saved layouts with their grid size and save date
+   - Click 📂 to load a layout or 🗑️ to delete it
+
+7. **Data Persistence**
+   - Your current seating arrangement is automatically saved
    - Reload the page anytime - your layout will be preserved
+   - Save multiple named layouts for different scenarios
    - Use "Cancella Dati Salvati" (Clear Saved Data) to reset everything
 
 ## 📁 Project Structure
@@ -104,16 +141,19 @@ npm run preview
 ```
 classroom-app-shuffle/
 ├── src/
-│   ├── App.jsx           # Main application component
-│   ├── ConfigMenu.jsx    # Configuration menu for grid settings
-│   ├── SeatGrid.jsx      # Grid layout component
-│   ├── Seat.jsx          # Individual seat component with drag-drop
-│   ├── StudentList.jsx   # Student list sidebar
-│   └── main.jsx          # Application entry point
-├── index.html            # HTML template
-├── package.json          # Project dependencies
-├── vite.config.js        # Vite configuration
-└── README.md             # This file
+│   ├── App.jsx              # Main application component
+│   ├── ConfigMenu.jsx       # Configuration menu for grid settings
+│   ├── SeatGrid.jsx         # Grid layout component
+│   ├── Seat.jsx             # Individual seat component with drag-drop
+│   ├── StudentList.jsx      # Student list sidebar with draggable items
+│   ├── DraggableDesk.jsx    # Draggable desk component
+│   ├── DraggableStudent.jsx # Draggable student component
+│   └── main.jsx             # Application entry point
+├── index.html               # HTML template
+├── package.json             # Project dependencies
+├── vite.config.js           # Vite configuration
+├── README.md                # This file
+└── STORAGE.md               # Data persistence documentation
 ```
 
 ## 🎨 Component Overview
@@ -140,20 +180,39 @@ Renders the classroom grid:
 - Updates when grid configuration changes
 
 ### Seat.jsx
-Individual seat component with:
-- Drag source functionality
-- Drop target functionality
-- Visual states (empty, occupied, dragging, hover)
+Individual seat/grid cell component with:
+- Drag source functionality (for desks and students)
+- Drop target functionality (accepts desks and students)
+- Visual states (empty cell, empty desk, occupied desk, dragging, valid/invalid drop)
+- Double-click to remove empty desks
 
 ### StudentList.jsx
-Simple sidebar displaying all students in the class
+Sidebar component displaying:
+- Draggable desk icon for adding new desks
+- List of all students (draggable if unassigned)
+- Visual indication of assigned vs unassigned students
+
+### DraggableDesk.jsx
+Reusable desk component that can be dragged from the sidebar to the grid
+
+### DraggableStudent.jsx
+Student list item component with drag functionality and assignment status
 
 ## 🎨 Visual Indicators
 
-- **Gray background** (#f0f0f0): Empty seat
-- **Green background** (#d1f7d6): Occupied seat
-- **Orange background** (#ffe0b3): Valid drop target (when hovering)
-- **50% opacity**: Seat being dragged
+### Grid Cells
+- **Light gray with dashed border**: Empty grid cell (no desk)
+- **Beige (#fff9e6) with solid border**: Empty desk (available for students)
+- **Green (#d1f7d6)**: Desk with assigned student
+- **Red border with glow + 🔒 icon**: Locked student (won't be shuffled or moved)
+- **Orange (#ffe0b3)**: Valid drop target (when hovering)
+- **Red (#ffcccc)**: Invalid drop target (when hovering)
+- **50% opacity**: Item being dragged
+
+### Student List
+- **Normal text**: Unassigned student (can be dragged)
+- **Crossed out with checkmark**: Assigned student (cannot be dragged)
+- **Gray background**: Assigned student indicator
 
 ## 🔧 Customization
 
