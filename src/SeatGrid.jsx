@@ -1,7 +1,7 @@
 import React from "react";
 import Seat from "./Seat";
 
-function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock }) {
+function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock, addTeacherDeskToGrid, removeTeacherDeskFromGrid, removeStudentFromSeat }) {
 
   return (
     <div
@@ -23,6 +23,9 @@ function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskTo
           addDeskToGrid={addDeskToGrid}
           removeDeskFromGrid={removeDeskFromGrid}
           toggleLock={toggleLock}
+          addTeacherDeskToGrid={addTeacherDeskToGrid}
+          removeTeacherDeskFromGrid={removeTeacherDeskFromGrid}
+          removeStudentFromSeat={removeStudentFromSeat}
         />
       ))}
     </div>

@@ -4,17 +4,37 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import SeatGrid from "./SeatGrid";
 import StudentList from "./StudentList";
 import ConfigMenu from "./ConfigMenu";
+import { getCurrentLanguage, saveLanguage, getTranslation } from "./i18n";
 
 const STORAGE_KEY = "classroom-seating-data";
 const SAVED_LAYOUTS_KEY = "classroom-saved-layouts";
 
 function App() {
-  const [students] = useState([
-    { id: 1, name: "Mario Rossi" },
-    { id: 2, name: "Luca Bianchi" },
-    { id: 3, name: "Anna Verdi" },
-    { id: 4, name: "Giulia Neri" },
-  ]);
+  // Language state
+  const [language, setLanguage] = useState(() => getCurrentLanguage());
+
+  // Function to change language
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    saveLanguage(lang);
+  };
+
+  // Translation helper
+  const t = (key) => getTranslation(language, key);
+
+  // Load students from localStorage or start with empty array
+  const [students, setStudents] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        return data.students || [];
+      }
+    } catch (error) {
+      console.error("Error loading students:", error);
+    }
+    return [];
+  });
 
   // Initialize state with lazy initialization to load from localStorage
   const [gridConfig, setGridConfig] = useState(() => {
@@ -39,6 +59,7 @@ function App() {
         const loadedSeats = (data.seats || []).map(seat => ({
           ...seat,
           hasDesk: seat.hasDesk ?? false,
+          hasTeacherDesk: seat.hasTeacherDesk ?? false,
           student: seat.student || null,
           isLocked: seat.isLocked ?? false
         }));
@@ -65,6 +86,7 @@ function App() {
         existingData.set(key, {
           student: seat.student,
           hasDesk: seat.hasDesk,
+          hasTeacherDesk: seat.hasTeacherDesk,
           isLocked: seat.isLocked
         });
       });
@@ -80,6 +102,7 @@ function App() {
             col: c,
             student: existing?.student || null,
             hasDesk: existing?.hasDesk || false,
+            hasTeacherDesk: existing?.hasTeacherDesk || false,
             isLocked: existing?.isLocked || false
           });
         }
@@ -88,7 +111,7 @@ function App() {
     }
   }, [gridConfig]); // Only depend on gridConfig, not seats
 
-  // Save to localStorage whenever seats or gridConfig change
+  // Save to localStorage whenever seats, gridConfig, or students change
   useEffect(() => {
     // Don't save if seats is empty (initial state before grid is created)
     if (seats.length === 0 && gridConfig.rows * gridConfig.cols > 0) {
@@ -99,13 +122,14 @@ function App() {
       const dataToSave = {
         gridConfig,
         seats,
+        students,
         lastUpdated: new Date().toISOString()
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (error) {
       console.error("Error saving data:", error);
     }
-  }, [seats, gridConfig]);
+  }, [seats, gridConfig, students]);
 
   const assignRandom = () => {
     const desksWithoutStudents = seats.filter(s => s.hasDesk && !s.student);
@@ -194,6 +218,16 @@ function App() {
     setSeats(newSeats);
   };
 
+  const addTeacherDeskToGrid = (seatId) => {
+    const newSeats = seats.map(seat => {
+      if (seat.id === seatId) {
+        return { ...seat, hasTeacherDesk: true };
+      }
+      return seat;
+    });
+    setSeats(newSeats);
+  };
+
   const removeDeskFromGrid = (seatId) => {
     const newSeats = seats.map(seat => {
       if (seat.id === seatId) {
@@ -204,10 +238,57 @@ function App() {
     setSeats(newSeats);
   };
 
+  const removeTeacherDeskFromGrid = (seatId) => {
+    const newSeats = seats.map(seat => {
+      if (seat.id === seatId) {
+        return { ...seat, hasTeacherDesk: false };
+      }
+      return seat;
+    });
+    setSeats(newSeats);
+  };
+
   const toggleLock = (seatId) => {
     const newSeats = seats.map(seat => {
       if (seat.id === seatId) {
         return { ...seat, isLocked: !seat.isLocked };
+      }
+      return seat;
+    });
+    setSeats(newSeats);
+  };
+
+  const removeStudentFromSeat = (seatId) => {
+    const newSeats = seats.map(seat => {
+      if (seat.id === seatId) {
+        return { ...seat, student: null, isLocked: false };
+      }
+      return seat;
+    });
+    setSeats(newSeats);
+  };
+
+  // Add a new student to the class
+  const addStudent = (studentName) => {
+    if (!studentName || !studentName.trim()) {
+      return;
+    }
+    const newStudent = {
+      id: Date.now(), // Use timestamp as unique ID
+      name: studentName.trim()
+    };
+    setStudents([...students, newStudent]);
+  };
+
+  // Remove a student from the class (and from any seat)
+  const removeStudent = (studentId) => {
+    // Remove from students list
+    setStudents(students.filter(s => s.id !== studentId));
+
+    // Remove from any seat they're assigned to
+    const newSeats = seats.map(seat => {
+      if (seat.student && seat.student.id === studentId) {
+        return { ...seat, student: null, isLocked: false };
       }
       return seat;
     });
@@ -237,6 +318,7 @@ function App() {
       savedLayouts[layoutName] = {
         gridConfig,
         seats,
+        students,
         savedAt: new Date().toISOString(),
       };
 
@@ -260,10 +342,13 @@ function App() {
         const loadedSeats = layout.seats.map(seat => ({
           ...seat,
           hasDesk: seat.hasDesk ?? false,
+          hasTeacherDesk: seat.hasTeacherDesk ?? false,
           student: seat.student || null,
           isLocked: seat.isLocked ?? false
         }));
         setSeats(loadedSeats);
+        // Load students from layout
+        setStudents(layout.students || []);
         return true;
       }
       return false;
@@ -307,15 +392,16 @@ function App() {
         <ConfigMenu
           gridConfig={gridConfig}
           setGridConfig={setGridConfig}
-          assignRandom={assignRandom}
-          shuffleSeats={shuffleSeats}
           clearSavedData={clearSavedData}
           saveLayout={saveLayout}
           loadLayout={loadLayout}
           getSavedLayouts={getSavedLayouts}
           deleteLayout={deleteLayout}
+          language={language}
+          changeLanguage={changeLanguage}
+          t={t}
         />
-        <h1 style={{ textAlign: "center" }}>Composizione Classe</h1>
+
         <div style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
           <SeatGrid
             seats={seats}
@@ -325,10 +411,18 @@ function App() {
             addDeskToGrid={addDeskToGrid}
             removeDeskFromGrid={removeDeskFromGrid}
             toggleLock={toggleLock}
+            addTeacherDeskToGrid={addTeacherDeskToGrid}
+            removeTeacherDeskFromGrid={removeTeacherDeskFromGrid}
+            removeStudentFromSeat={removeStudentFromSeat}
           />
           <StudentList
             students={students}
             assignedStudentIds={assignedStudentIds}
+            addStudent={addStudent}
+            removeStudent={removeStudent}
+            assignRandom={assignRandom}
+            shuffleSeats={shuffleSeats}
+            t={t}
           />
         </div>
       </div>

@@ -1,6 +1,8 @@
-# Classroom Seating App
+# Classroom Seating App / Composizione Classe
 
 A React-based interactive classroom seating arrangement application that allows teachers to manage and organize student seating with drag-and-drop functionality.
+
+**🌍 Multi-language support**: 🇮🇹 Italian / 🇬🇧 English
 
 ## 📋 Overview
 
@@ -16,31 +18,46 @@ This application provides an intuitive interface for teachers to:
 
 ## ✨ Features
 
+### 🌍 Multi-Language Support
+- **Italian (Italiano)** 🇮🇹 and **English** 🇬🇧 interface
+- Language selector in the configuration menu
+- Persistent language preference (saved in localStorage)
+- All UI elements, buttons, labels, and messages are translated
+- Easy to switch between languages on the fly
+
 ### 🎯 Dynamic Grid Configuration
 - Customize the number of rows and columns for your classroom layout
 - Flexible grid that adapts to different classroom sizes
 - Real-time grid updates when configuration changes
 
-### 🎲 Random Assignment
-- **Assign Random**: Automatically assigns all students to available seats randomly
-- **Shuffle**: Redistributes already-assigned students to different seats while keeping the same students in the grid
+### 🎲 Quick Assignment
+- **Insert Students / Inserisci Studenti**: Automatically assigns all unassigned students to available seats randomly
+- **Shuffle Students / Shuffle Studenti**: Redistributes already-assigned students to different seats while keeping the same students in the grid
 
 ### 🖱️ Drag-and-Drop Interface
-- **Drag Desks**: Drag the desk icon from the sidebar to any empty grid cell to place a desk
+- **Drag Desks**: Drag the desk icon (🪑) from the sidebar to any empty grid cell to place a desk
+- **Drag Teacher Desk**: Drag the teacher desk icon (🏫) from the sidebar to place the teacher's desk
 - **Drag Students**: Drag students from the list onto desks to assign them
 - **Move Desks**: Drag desks within the grid to rearrange the classroom layout
 - **Swap Students**: Drag students between desks to swap their positions
 - **Lock Students**: Click on an occupied desk to lock/unlock the student (locked students won't be shuffled or moved)
-- **Remove Desks**: Double-click on an empty desk to remove it from the grid
+- **Remove Students**: Click the ✕ icon (top-left) on a desk to remove the student (mobile-friendly)
+- **Remove Desks**: Click the ✕ icon (top-right) on an empty desk to remove it (mobile-friendly)
+- **Remove Teacher Desk**: Click the ✕ icon (top-right) on the teacher desk to remove it (mobile-friendly)
 - Visual feedback when dragging (opacity change) and hovering over drop targets (color change)
 - Color-coded drop zones: orange for valid drops, red for invalid drops
 - Locked desks show a 🔒 icon and red border with glow effect
+- Teacher desk has distinctive brown color and larger icon
 - Smooth interaction using React DnD library
 
 ### 📊 Student Management
+- **Add Students**: Add new students to your class with a simple form
+- **Remove Students**: Remove students from the class (also removes them from any assigned seat)
+- **No Pre-loaded Data**: Start with an empty class roster and build it yourself
 - View complete list of students in the sidebar
 - Assigned students are marked with a checkmark and crossed out
 - Unassigned students can be dragged onto desks
+- Each student has a ✕ button to remove them from the class
 - Visual distinction between:
   - Empty grid cells (light gray with dashed border)
   - Empty desks (beige with solid border and chair emoji 🪑)
@@ -102,9 +119,10 @@ npm run preview
    - Set the desired number of rows and columns
    - Click "Applica" (Apply) to create an empty grid
 
-2. **Add Desks to the Classroom**
-   - Drag the desk icon (🪑) from the sidebar
-   - Drop it onto any empty grid cell
+2. **Add Elements to the Classroom**
+   - Drag the desk icon (🪑) from the sidebar to add student desks
+   - Drag the teacher desk icon (🏫) from the sidebar to add the teacher's desk
+   - Drop them onto any empty grid cell
    - Repeat to add as many desks as needed
 
 3. **Assign Students to Desks**
@@ -202,12 +220,19 @@ Student list item component with drag functionality and assignment status
 
 ### Grid Cells
 - **Light gray with dashed border**: Empty grid cell (no desk)
-- **Beige (#fff9e6) with solid border**: Empty desk (available for students)
-- **Green (#d1f7d6)**: Desk with assigned student
-- **Red border with glow + 🔒 icon**: Locked student (won't be shuffled or moved)
+- **Beige (#fff9e6) with solid border + ✕ (top-right)**: Empty desk (available for students)
+- **Green (#d1f7d6) + ✕ (top-left)**: Desk with assigned student
+- **Tan/Brown (#D2B48C) with thick brown border + ✕ (top-right)**: Teacher desk (🏫)
+- **Red border with glow + 🔒 (top-right)**: Locked student (won't be shuffled or moved)
 - **Orange (#ffe0b3)**: Valid drop target (when hovering)
 - **Red (#ffcccc)**: Invalid drop target (when hovering)
 - **50% opacity**: Item being dragged
+
+### Delete Icons (✕)
+- **Top-left ✕**: Remove student from desk (only on desks with students)
+- **Top-right ✕**: Remove empty desk or teacher desk
+- **Opacity 0.5-0.7**: Default state (always visible for mobile)
+- **Opacity 1.0**: On hover (desktop)
 
 ### Student List
 - **Normal text**: Unassigned student (can be dragged)

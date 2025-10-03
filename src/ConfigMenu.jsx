@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 function ConfigMenu({
   gridConfig,
   setGridConfig,
-  assignRandom,
-  shuffleSeats,
   clearSavedData,
   saveLayout,
   loadLayout,
   getSavedLayouts,
-  deleteLayout
+  deleteLayout,
+  language,
+  changeLanguage,
+  t
 }) {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState(gridConfig.rows);
@@ -31,7 +32,7 @@ function ConfigMenu({
   };
 
   const handleClearData = () => {
-    if (window.confirm("Sei sicuro di voler cancellare tutti i dati salvati?")) {
+    if (window.confirm(t('confirmClearData'))) {
       clearSavedData();
       setOpen(false);
     }
@@ -44,29 +45,24 @@ function ConfigMenu({
         setLayoutName("");
         setShowSaveInput(false);
         setSavedLayouts(getSavedLayouts());
-        alert(`Disposizione "${layoutName}" salvata con successo!`);
-      } else {
-        alert("Errore nel salvataggio della disposizione.");
+        alert(t('layoutSaved'));
       }
     }
   };
 
   const handleLoadLayout = (name) => {
-    if (window.confirm(`Caricare la disposizione "${name}"? La disposizione corrente verrà sostituita.`)) {
-      const success = loadLayout(name);
-      if (success) {
-        setOpen(false);
-        // Update rows and cols to match loaded config
-        setRows(gridConfig.rows);
-        setCols(gridConfig.cols);
-      } else {
-        alert("Errore nel caricamento della disposizione.");
-      }
+    const success = loadLayout(name);
+    if (success) {
+      setOpen(false);
+      // Update rows and cols to match loaded config
+      setRows(gridConfig.rows);
+      setCols(gridConfig.cols);
+      alert(t('layoutLoaded'));
     }
   };
 
   const handleDeleteLayout = (name) => {
-    if (window.confirm(`Eliminare la disposizione "${name}"? Questa azione non può essere annullata.`)) {
+    if (window.confirm(t('confirmDeleteLayout'))) {
       const success = deleteLayout(name);
       if (success) {
         setSavedLayouts(getSavedLayouts());
@@ -85,28 +81,28 @@ function ConfigMenu({
           position: "fixed",
           top: "20px",
           left: "20px",
-          fontSize: "28px",
-          background: "#4CAF50",
+          fontSize: "24px",
+          background: "#2c3e50",
           color: "white",
           border: "none",
           cursor: "pointer",
           width: "50px",
           height: "50px",
-          borderRadius: "50%",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          borderRadius: "8px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
           zIndex: 1001,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          transition: "all 0.3s ease",
+          transition: "all 0.2s ease",
         }}
         onMouseEnter={(e) => {
-          e.target.style.transform = "scale(1.1)";
-          e.target.style.boxShadow = "0 6px 8px rgba(0,0,0,0.15)";
+          e.target.style.background = "#34495e";
+          e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
         }}
         onMouseLeave={(e) => {
-          e.target.style.transform = "scale(1)";
-          e.target.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
+          e.target.style.background = "#2c3e50";
+          e.target.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
         }}
       >
         {open ? "✕" : "☰"}
@@ -137,13 +133,14 @@ function ConfigMenu({
               left: 0,
               width: "400px",
               height: "100vh",
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              color: "white",
+              background: "#ffffff",
+              color: "#2c3e50",
               padding: "80px 30px 30px 30px",
               zIndex: 1000,
-              boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
+              boxShadow: "4px 0 20px rgba(0,0,0,0.1)",
               overflowY: "auto",
               animation: "slideIn 0.3s ease",
+              borderRight: "1px solid #e0e0e0",
             }}
           >
             <style>
@@ -167,24 +164,48 @@ function ConfigMenu({
               `}
             </style>
 
-            <h2 style={{ marginTop: 0, fontSize: "28px", marginBottom: "30px" }}>
-              ⚙️ Configurazione
-            </h2>
+            {/* Header with Logo */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              marginBottom: "30px",
+              paddingBottom: "20px",
+              borderBottom: "1px solid #e9ecef"
+            }}>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  objectFit: "contain"
+                }}
+              />
+              <div>
+                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "600", color: "#2c3e50", lineHeight: "1.2" }}>
+                  {t('appTitle')}
+                </h2>
+                <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#6c757d" }}>
+                  {t('configuration')}
+                </p>
+              </div>
+            </div>
 
             {/* Grid Configuration Section */}
             <div style={{
-              background: "rgba(255, 255, 255, 0.1)",
+              background: "#f8f9fa",
               padding: "20px",
-              borderRadius: "10px",
+              borderRadius: "8px",
               marginBottom: "20px",
-              backdropFilter: "blur(10px)",
+              border: "1px solid #e9ecef",
             }}>
-              <h3 style={{ marginTop: 0, fontSize: "18px", marginBottom: "15px" }}>
-                📐 Dimensioni Griglia
+              <h3 style={{ marginTop: 0, fontSize: "14px", marginBottom: "15px", fontWeight: "600", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                {t('gridDimensions')}
               </h3>
               <div style={{ marginBottom: "15px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "14px" }}>
-                  Righe:
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
+                  {t('rows')}:
                 </label>
                 <input
                   type="number"
@@ -194,17 +215,18 @@ function ConfigMenu({
                   max="20"
                   style={{
                     width: "100%",
-                    padding: "10px",
-                    fontSize: "16px",
-                    border: "none",
-                    borderRadius: "5px",
-                    background: "rgba(255, 255, 255, 0.9)",
+                    padding: "10px 12px",
+                    fontSize: "14px",
+                    border: "1px solid #dee2e6",
+                    borderRadius: "6px",
+                    background: "#ffffff",
+                    color: "#495057",
                   }}
                 />
               </div>
               <div style={{ marginBottom: "15px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "14px" }}>
-                  Colonne:
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
+                  {t('columns')}:
                 </label>
                 <input
                   type="number"
@@ -214,11 +236,12 @@ function ConfigMenu({
                   max="20"
                   style={{
                     width: "100%",
-                    padding: "10px",
-                    fontSize: "16px",
-                    border: "none",
-                    borderRadius: "5px",
-                    background: "rgba(255, 255, 255, 0.9)",
+                    padding: "10px 12px",
+                    fontSize: "14px",
+                    border: "1px solid #dee2e6",
+                    borderRadius: "6px",
+                    background: "#ffffff",
+                    color: "#495057",
                   }}
                 />
               </div>
@@ -226,91 +249,33 @@ function ConfigMenu({
                 onClick={applyChanges}
                 style={{
                   width: "100%",
-                  padding: "12px",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  background: "#4CAF50",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  background: "#2c3e50",
                   color: "white",
                   border: "none",
-                  borderRadius: "5px",
+                  borderRadius: "6px",
                   cursor: "pointer",
-                  transition: "all 0.3s ease",
+                  transition: "all 0.2s ease",
                 }}
-                onMouseEnter={(e) => e.target.style.background = "#45a049"}
-                onMouseLeave={(e) => e.target.style.background = "#4CAF50"}
+                onMouseEnter={(e) => e.target.style.background = "#34495e"}
+                onMouseLeave={(e) => e.target.style.background = "#2c3e50"}
               >
-                ✓ Applica Modifiche
-              </button>
-            </div>
-
-            {/* Actions Section */}
-            <div style={{
-              background: "rgba(255, 255, 255, 0.1)",
-              padding: "20px",
-              borderRadius: "10px",
-              marginBottom: "20px",
-              backdropFilter: "blur(10px)",
-            }}>
-              <h3 style={{ marginTop: 0, fontSize: "18px", marginBottom: "15px" }}>
-                🎲 Azioni Rapide
-              </h3>
-              <button
-                onClick={() => {
-                  assignRandom();
-                  setOpen(false);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  background: "#2196F3",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  marginBottom: "10px",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => e.target.style.background = "#0b7dda"}
-                onMouseLeave={(e) => e.target.style.background = "#2196F3"}
-              >
-                🎯 Assegna Random
-              </button>
-              <button
-                onClick={() => {
-                  shuffleSeats();
-                  setOpen(false);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  background: "#FF9800",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => e.target.style.background = "#e68900"}
-                onMouseLeave={(e) => e.target.style.background = "#FF9800"}
-              >
-                🔀 Shuffle Studenti
+                {t('applyChanges')}
               </button>
             </div>
 
             {/* Saved Layouts Section */}
             <div style={{
-              background: "rgba(255, 255, 255, 0.1)",
+              background: "#f8f9fa",
               padding: "20px",
-              borderRadius: "10px",
+              borderRadius: "8px",
               marginBottom: "20px",
-              backdropFilter: "blur(10px)",
+              border: "1px solid #e9ecef",
             }}>
-              <h3 style={{ marginTop: 0, fontSize: "18px", marginBottom: "15px" }}>
-                💾 Disposizioni Salvate
+              <h3 style={{ marginTop: 0, fontSize: "14px", marginBottom: "15px", fontWeight: "600", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                {t('savedLayouts')}
               </h3>
 
               {/* Save Current Layout Button */}
@@ -319,27 +284,33 @@ function ConfigMenu({
                   onClick={() => setShowSaveInput(true)}
                   style={{
                     width: "100%",
-                    padding: "12px",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    background: "#9C27B0",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
+                    padding: "10px 16px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    background: "#ffffff",
+                    color: "#2c3e50",
+                    border: "1px solid #dee2e6",
+                    borderRadius: "6px",
                     cursor: "pointer",
                     marginBottom: "15px",
-                    transition: "all 0.3s ease",
+                    transition: "all 0.2s ease",
                   }}
-                  onMouseEnter={(e) => e.target.style.background = "#7B1FA2"}
-                  onMouseLeave={(e) => e.target.style.background = "#9C27B0"}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "#2c3e50";
+                    e.target.style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "#ffffff";
+                    e.target.style.color = "#2c3e50";
+                  }}
                 >
-                  💾 Salva Disposizione Corrente
+                  {t('saveCurrentLayout')}
                 </button>
               ) : (
                 <div style={{ marginBottom: "15px" }}>
                   <input
                     type="text"
-                    placeholder="Nome disposizione..."
+                    placeholder={t('layoutNamePlaceholder')}
                     value={layoutName}
                     onChange={(e) => setLayoutName(e.target.value)}
                     onKeyPress={(e) => {
@@ -347,12 +318,13 @@ function ConfigMenu({
                     }}
                     style={{
                       width: "100%",
-                      padding: "10px",
+                      padding: "10px 12px",
                       fontSize: "14px",
-                      border: "none",
-                      borderRadius: "5px",
+                      border: "1px solid #dee2e6",
+                      borderRadius: "6px",
                       marginBottom: "8px",
-                      background: "rgba(255, 255, 255, 0.9)",
+                      background: "#ffffff",
+                      color: "#495057",
                     }}
                     autoFocus
                   />
@@ -361,17 +333,17 @@ function ConfigMenu({
                       onClick={handleSaveLayout}
                       style={{
                         flex: 1,
-                        padding: "10px",
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        background: "#4CAF50",
+                        padding: "8px 12px",
+                        fontSize: "13px",
+                        fontWeight: "500",
+                        background: "#2c3e50",
                         color: "white",
                         border: "none",
-                        borderRadius: "5px",
+                        borderRadius: "6px",
                         cursor: "pointer",
                       }}
                     >
-                      ✓ Salva
+                      {t('save')}
                     </button>
                     <button
                       onClick={() => {
@@ -380,17 +352,17 @@ function ConfigMenu({
                       }}
                       style={{
                         flex: 1,
-                        padding: "10px",
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        background: "#757575",
+                        padding: "8px 12px",
+                        fontSize: "13px",
+                        fontWeight: "500",
+                        background: "#6c757d",
                         color: "white",
                         border: "none",
-                        borderRadius: "5px",
+                        borderRadius: "6px",
                         cursor: "pointer",
                       }}
                     >
-                      ✕ Annulla
+                      {t('cancel')}
                     </button>
                   </div>
                 </div>
@@ -403,20 +375,21 @@ function ConfigMenu({
                     <div
                       key={layout.name}
                       style={{
-                        background: "rgba(255, 255, 255, 0.15)",
+                        background: "#ffffff",
                         padding: "12px",
-                        borderRadius: "8px",
+                        borderRadius: "6px",
                         marginBottom: "8px",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        border: "1px solid #dee2e6",
                       }}
                     >
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+                        <div style={{ fontWeight: "500", marginBottom: "4px", color: "#2c3e50", fontSize: "14px" }}>
                           {layout.name}
                         </div>
-                        <div style={{ fontSize: "11px", opacity: 0.8 }}>
+                        <div style={{ fontSize: "12px", color: "#6c757d" }}>
                           {layout.gridConfig.rows}×{layout.gridConfig.cols} • {new Date(layout.savedAt).toLocaleDateString()}
                         </div>
                       </div>
@@ -424,32 +397,50 @@ function ConfigMenu({
                         <button
                           onClick={() => handleLoadLayout(layout.name)}
                           style={{
-                            padding: "8px 12px",
+                            padding: "6px 10px",
                             fontSize: "12px",
-                            background: "#2196F3",
-                            color: "white",
-                            border: "none",
+                            background: "#ffffff",
+                            color: "#2c3e50",
+                            border: "1px solid #dee2e6",
                             borderRadius: "4px",
                             cursor: "pointer",
+                            transition: "all 0.2s ease",
                           }}
-                          title="Carica questa disposizione"
+                          onMouseEnter={(e) => {
+                            e.target.style.background = "#2c3e50";
+                            e.target.style.color = "#ffffff";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = "#ffffff";
+                            e.target.style.color = "#2c3e50";
+                          }}
+                          title={t('load')}
                         >
-                          📂
+                          {t('load')}
                         </button>
                         <button
                           onClick={() => handleDeleteLayout(layout.name)}
                           style={{
-                            padding: "8px 12px",
+                            padding: "6px 10px",
                             fontSize: "12px",
-                            background: "#f44336",
-                            color: "white",
-                            border: "none",
+                            background: "#ffffff",
+                            color: "#dc3545",
+                            border: "1px solid #dc3545",
                             borderRadius: "4px",
                             cursor: "pointer",
+                            transition: "all 0.2s ease",
                           }}
-                          title="Elimina questa disposizione"
+                          onMouseEnter={(e) => {
+                            e.target.style.background = "#dc3545";
+                            e.target.style.color = "#ffffff";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = "#ffffff";
+                            e.target.style.color = "#dc3545";
+                          }}
+                          title={t('delete')}
                         >
-                          🗑️
+                          {t('delete')}
                         </button>
                       </div>
                     </div>
@@ -458,48 +449,122 @@ function ConfigMenu({
               ) : (
                 <p style={{
                   fontSize: "13px",
-                  opacity: 0.7,
+                  color: "#6c757d",
                   textAlign: "center",
                   margin: 0,
                   padding: "20px 0"
                 }}>
-                  Nessuna disposizione salvata
+                  {t('noSavedLayouts')}
                 </p>
               )}
             </div>
 
+            {/* Language Selector */}
+            <div style={{
+              background: "#f8f9fa",
+              padding: "20px",
+              borderRadius: "8px",
+              marginBottom: "20px",
+              border: "1px solid #e9ecef",
+            }}>
+              <h3 style={{ marginTop: 0, fontSize: "14px", marginBottom: "15px", fontWeight: "600", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                {t('language')}
+              </h3>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  onClick={() => changeLanguage('it')}
+                  style={{
+                    flex: 1,
+                    padding: "10px 16px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    background: language === 'it' ? "#2c3e50" : "#ffffff",
+                    color: language === 'it' ? "#ffffff" : "#2c3e50",
+                    border: `1px solid ${language === 'it' ? "#2c3e50" : "#dee2e6"}`,
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (language !== 'it') {
+                      e.target.style.background = "#f8f9fa";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (language !== 'it') {
+                      e.target.style.background = "#ffffff";
+                    }
+                  }}
+                >
+                  🇮🇹 {t('italian')}
+                </button>
+                <button
+                  onClick={() => changeLanguage('en')}
+                  style={{
+                    flex: 1,
+                    padding: "10px 16px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    background: language === 'en' ? "#2c3e50" : "#ffffff",
+                    color: language === 'en' ? "#ffffff" : "#2c3e50",
+                    border: `1px solid ${language === 'en' ? "#2c3e50" : "#dee2e6"}`,
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (language !== 'en') {
+                      e.target.style.background = "#f8f9fa";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (language !== 'en') {
+                      e.target.style.background = "#ffffff";
+                    }
+                  }}
+                >
+                  🇬🇧 {t('english')}
+                </button>
+              </div>
+            </div>
+
             {/* Danger Zone */}
             <div style={{
-              background: "rgba(255, 107, 107, 0.2)",
+              background: "#fff5f5",
               padding: "20px",
-              borderRadius: "10px",
-              border: "2px solid rgba(255, 107, 107, 0.5)",
-              backdropFilter: "blur(10px)",
+              borderRadius: "8px",
+              border: "1px solid #feb2b2",
             }}>
-              <h3 style={{ marginTop: 0, fontSize: "18px", marginBottom: "10px" }}>
-                ⚠️ Zona Pericolosa
+              <h3 style={{ marginTop: 0, fontSize: "14px", marginBottom: "10px", fontWeight: "600", color: "#c53030", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                {t('dangerZone')}
               </h3>
-              <p style={{ fontSize: "13px", marginBottom: "15px", opacity: 0.9 }}>
-                Questa azione cancellerà tutti i dati salvati e resetterà l'applicazione.
+              <p style={{ fontSize: "13px", marginBottom: "15px", color: "#742a2a" }}>
+                {t('dangerZoneWarning')}
               </p>
               <button
                 onClick={handleClearData}
                 style={{
                   width: "100%",
-                  padding: "12px",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  background: "#f44336",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  background: "#ffffff",
+                  color: "#dc3545",
+                  border: "1px solid #dc3545",
+                  borderRadius: "6px",
                   cursor: "pointer",
-                  transition: "all 0.3s ease",
+                  transition: "all 0.2s ease",
                 }}
-                onMouseEnter={(e) => e.target.style.background = "#da190b"}
-                onMouseLeave={(e) => e.target.style.background = "#f44336"}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "#dc3545";
+                  e.target.style.color = "#ffffff";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "#ffffff";
+                  e.target.style.color = "#dc3545";
+                }}
               >
-                🗑️ Cancella Tutti i Dati
+                {t('clearAllData')}
               </button>
             </div>
 
@@ -507,15 +572,14 @@ function ConfigMenu({
             <div style={{
               marginTop: "30px",
               padding: "15px",
-              background: "rgba(255, 255, 255, 0.05)",
+              background: "#f8f9fa",
               borderRadius: "8px",
               fontSize: "12px",
-              opacity: 0.8,
+              border: "1px solid #e9ecef",
             }}>
-              <p style={{ margin: "0 0 5px 0" }}>💡 <strong>Suggerimento:</strong></p>
-              <p style={{ margin: 0 }}>
-                Trascina i banchi dalla sidebar per creare il layout della classe,
-                poi trascina gli studenti sui banchi per assegnarli.
+              <p style={{ margin: "0 0 5px 0", color: "#495057", fontWeight: "500" }}>{t('tip')}</p>
+              <p style={{ margin: 0, color: "#6c757d" }}>
+                {t('tipMessage')}
               </p>
             </div>
           </div>

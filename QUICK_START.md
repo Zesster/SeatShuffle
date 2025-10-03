@@ -1,19 +1,29 @@
 # Quick Start Guide
 
-## 🚀 Getting Started in 3 Steps
+## 🚀 Getting Started in 4 Steps
 
-### Step 1: Create Your Classroom Grid
+### Step 1: Add Students to Your Class
+1. Look at the right sidebar under **"Gestione Studenti"**
+2. Type a student's name in the input field
+3. Click the **➕** button to add them to the class
+4. Repeat for all students in your class
+5. **Tip**: You can remove a student anytime by clicking the **✕** button next to their name
+
+### Step 2: Create Your Classroom Grid
 1. Click the **☰** menu in the top-left corner
 2. Set the number of **rows** and **columns** for your classroom
 3. Click **"Applica"** to create an empty grid
 
-### Step 2: Add Desks
-1. Look at the sidebar on the right - you'll see a desk icon (🪑)
-2. **Drag the desk icon** from the sidebar
-3. **Drop it** onto any empty grid cell
-4. Repeat to add as many desks as you need
+### Step 3: Add Classroom Elements
+1. Look at the sidebar on the left under "Elementi Aula"
+2. You'll see two draggable elements:
+   - **Student desk** (🪑) - for students
+   - **Teacher desk** (🏫) - for the teacher
+3. **Drag an element** from the sidebar
+4. **Drop it** onto any empty grid cell
+5. Repeat to add as many desks as you need and position the teacher's desk
 
-### Step 3: Assign Students
+### Step 4: Assign Students
 1. **Drag a student's name** from the list
 2. **Drop it** onto a desk
 3. The student will be assigned to that desk
@@ -23,10 +33,17 @@
 
 ## 🎯 Common Tasks
 
-### Randomly Assign Students
-1. First, add desks to your grid (see Step 2 above)
-2. Click **☰** menu → **"Assegna Random"**
-3. All unassigned students will be randomly placed on empty desks
+### Add or Remove Students
+1. **To add**: Type name in the input field under "Gestione Studenti"
+2. Click **➕** to add the student
+3. **To remove**: Click the **✕** button next to a student's name
+4. **Note**: Removing a student also removes them from any assigned seat
+
+### Quickly Insert Students
+1. First, add students to your class (see Step 1 above)
+2. Add desks to your grid (see Step 3 above)
+3. Click **☰** menu → **"Inserisci Studenti"**
+4. All unassigned students will be randomly placed on empty desks
 
 ### Shuffle Existing Assignments
 1. Click **☰** menu → **"Shuffle"**
@@ -37,10 +54,11 @@
 2. **Drop it** on another position in the grid
 3. The desks will swap positions
 
-### Remove a Desk
-1. **Double-click** on an empty desk
-2. The desk will be removed from the grid
-3. (Note: You cannot remove a desk with a student on it - remove the student first)
+### Remove a Desk or Teacher Desk
+1. Look for the **✕** icon in the top-right corner of an empty desk or teacher desk
+2. **Click the ✕** to remove it
+3. The element will be removed from the grid
+4. (Note: Desks with students show the ✕ in the top-left to remove the student)
 
 ### Swap Two Students
 1. **Drag a student** from one desk
@@ -48,8 +66,15 @@
 3. The two students will swap positions
 4. Note: Locked students cannot be swapped
 
+### Remove a Student from a Desk
+1. Look for the **✕** icon in the **top-left corner** of a desk with a student
+2. **Click the ✕** to remove the student
+3. The student returns to the available list
+4. The desk remains empty and ready for another student
+5. (Note: Empty desks show the ✕ in the top-right corner instead)
+
 ### Lock/Unlock a Student
-1. **Click** on a desk with a student
+1. **Click** on a desk with a student (not on the ✕ icon)
 2. A 🔒 icon appears and the border turns red
 3. **Click again** to unlock
 4. Locked students:
@@ -57,6 +82,7 @@
    - Can't be dragged to other desks
    - Can't be swapped with other students
    - Stay in place when you use "Shuffle"
+   - The ✕ icon is hidden (unlock first to remove)
 
 ### Save Your Layout
 1. Click **☰** menu
@@ -96,11 +122,13 @@
 - **Solid border**: Desk (with or without student)
 
 ### Drag & Drop Rules
-- ✅ You **can** drag desks from the sidebar to empty grid cells
-- ✅ You **can** drag students from the list to empty desks
+- ✅ You **can** drag student desks (🪑) from the sidebar to empty grid cells
+- ✅ You **can** drag teacher desk (🏫) from the sidebar to empty grid cells
+- ✅ You **can** drag students from the list to empty student desks
 - ✅ You **can** drag desks within the grid to rearrange them
 - ✅ You **can** drag students between desks to swap them (if not locked)
 - ❌ You **cannot** drag students onto empty grid cells (add a desk first!)
+- ❌ You **cannot** drag students onto the teacher desk
 - ❌ You **cannot** drag assigned students from the list (they're already placed)
 - ❌ You **cannot** drag or swap locked students (unlock them first!)
 
