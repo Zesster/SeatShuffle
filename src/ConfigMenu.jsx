@@ -80,8 +80,8 @@ function ConfigMenu({
         className="config-menu-button"
         style={{
           position: "fixed",
-          top: "20px",
-          left: "20px",
+          top: "10px",
+          left: "10px",
           fontSize: "24px",
           background: "#2c3e50",
           color: "white",

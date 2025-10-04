@@ -478,7 +478,7 @@ function App() {
           {dragEnabled ? "Drag" : "Scroll"}
         </button>
 
-        <div className="main-content" style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
+        <div className="main-content" style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
           <div className="grid-scroll-container">
             <SeatGrid
               seats={seats}
