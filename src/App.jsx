@@ -1,10 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { MultiBackend, MouseTransition, TouchTransition } from "dnd-multi-backend";
 import SeatGrid from "./SeatGrid";
 import StudentList from "./StudentList";
 import ConfigMenu from "./ConfigMenu";
 import { getCurrentLanguage, saveLanguage, getTranslation } from "./i18n";
+
+// Custom MultiBackend configuration
+const HTML5toTouch = {
+  backends: [
+    {
+      id: 'html5',
+      backend: HTML5Backend,
+      transition: MouseTransition,
+    },
+    {
+      id: 'touch',
+      backend: TouchBackend,
+      options: {
+        enableMouseEvents: true,
+        delayTouchStart: 100,  // Delay ridotto a 100ms
+        ignoreContextMenu: true,
+      },
+      preview: true,
+      transition: TouchTransition,
+    },
+  ],
+};
 
 const STORAGE_KEY = "classroom-seating-data";
 const SAVED_LAYOUTS_KEY = "classroom-saved-layouts";
@@ -12,6 +36,9 @@ const SAVED_LAYOUTS_KEY = "classroom-saved-layouts";
 function App() {
   // Language state
   const [language, setLanguage] = useState(() => getCurrentLanguage());
+
+  // Toggle to enable/disable dragging (useful on mobile to allow scroll)
+  const [dragEnabled, setDragEnabled] = useState(true);
 
   // Function to change language
   const changeLanguage = (lang) => {
@@ -386,9 +413,37 @@ function App() {
     }
   };
 
+  // Try to lock landscape orientation (where supported)
+  const lockLandscape = async () => {
+    try {
+      // Fullscreen often required before locking
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      }
+      if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+        await window.screen.orientation.lock('landscape');
+        alert('Orientamento bloccato in orizzontale (se supportato).');
+      } else {
+        alert('Il blocco orientamento non è supportato su questo browser.');
+      }
+    } catch (e) {
+      console.warn('Orientation lock failed:', e);
+      alert('Impossibile bloccare l\'orientamento. Ruota manualmente il dispositivo.');
+    }
+  };
+
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div style={{ padding: "10px", fontFamily: "Arial", position: "relative" }}>
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <div className="app-container" style={{ padding: "10px", fontFamily: "Arial", position: "relative" }}>
+        {/* Portrait overlay to force landscape usage */}
+        <div className="force-landscape-overlay">
+          <div className="box">
+            <h2>Ruota il dispositivo</h2>
+            <p>Questa app è ottimizzata per l\'uso in orizzontale. Ruota il telefono oppure prova a bloccare l\'orientamento.</p>
+            <button onClick={lockLandscape}>Tenta blocco orizzontale</button>
+          </div>
+        </div>
+
         <ConfigMenu
           gridConfig={gridConfig}
           setGridConfig={setGridConfig}
@@ -402,28 +457,55 @@ function App() {
           t={t}
         />
 
-        <div style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
-          <SeatGrid
-            seats={seats}
-            gridConfig={gridConfig}
-            swapSeats={swapSeats}
-            assignStudentToSeat={assignStudentToSeat}
-            addDeskToGrid={addDeskToGrid}
-            removeDeskFromGrid={removeDeskFromGrid}
-            toggleLock={toggleLock}
-            addTeacherDeskToGrid={addTeacherDeskToGrid}
-            removeTeacherDeskFromGrid={removeTeacherDeskFromGrid}
-            removeStudentFromSeat={removeStudentFromSeat}
-          />
-          <StudentList
-            students={students}
-            assignedStudentIds={assignedStudentIds}
-            addStudent={addStudent}
-            removeStudent={removeStudent}
-            assignRandom={assignRandom}
-            shuffleSeats={shuffleSeats}
-            t={t}
-          />
+        {/* Floating toggle for Drag/Scroll mode */}
+        <button
+          onClick={() => setDragEnabled((v) => !v)}
+          style={{
+            position: "fixed",
+            right: "10px",
+            bottom: "10px",
+            zIndex: 2000,
+            padding: "8px 10px",
+            fontSize: "12px",
+            borderRadius: "16px",
+            border: "1px solid #ccc",
+            background: dragEnabled ? "#2c3e50" : "#ffffff",
+            color: dragEnabled ? "#ffffff" : "#2c3e50",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+          }}
+          title={dragEnabled ? "Drag attivo – tocca per attivare Scorrimento" : "Scorrimento attivo – tocca per attivare Drag"}
+        >
+          {dragEnabled ? "Drag" : "Scroll"}
+        </button>
+
+        <div className="main-content" style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
+          <div className="grid-scroll-container">
+            <SeatGrid
+              seats={seats}
+              gridConfig={gridConfig}
+              swapSeats={swapSeats}
+              assignStudentToSeat={assignStudentToSeat}
+              addDeskToGrid={addDeskToGrid}
+              removeDeskFromGrid={removeDeskFromGrid}
+              toggleLock={toggleLock}
+              addTeacherDeskToGrid={addTeacherDeskToGrid}
+              removeTeacherDeskFromGrid={removeTeacherDeskFromGrid}
+              removeStudentFromSeat={removeStudentFromSeat}
+              dragEnabled={dragEnabled}
+            />
+          </div>
+          <div className="student-list-sidebar">
+            <StudentList
+              students={students}
+              assignedStudentIds={assignedStudentIds}
+              addStudent={addStudent}
+              removeStudent={removeStudent}
+              assignRandom={assignRandom}
+              shuffleSeats={shuffleSeats}
+              t={t}
+              dragEnabled={dragEnabled}
+            />
+          </div>
         </div>
       </div>
     </DndProvider>

@@ -3,7 +3,7 @@ import DraggableStudent from "./DraggableStudent";
 import DraggableDesk from "./DraggableDesk";
 import DraggableTeacherDesk from "./DraggableTeacherDesk";
 
-function StudentList({ students, assignedStudentIds, addStudent, removeStudent, assignRandom, shuffleSeats, t }) {
+function StudentList({ students, assignedStudentIds, addStudent, removeStudent, assignRandom, shuffleSeats, t, dragEnabled = true }) {
   const [newStudentName, setNewStudentName] = useState("");
   const [classroomElementsOpen, setClassroomElementsOpen] = useState(true);
   const [studentManagementOpen, setStudentManagementOpen] = useState(true);
@@ -108,8 +108,8 @@ function StudentList({ students, assignedStudentIds, addStudent, removeStudent, 
               {t('tipMessage')}
             </p>
             <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-              <DraggableDesk />
-              <DraggableTeacherDesk />
+              <DraggableDesk dragEnabled={dragEnabled} />
+              <DraggableTeacherDesk dragEnabled={dragEnabled} />
             </div>
             <p style={{ fontSize: "11px", color: "#999", marginTop: "5px", margin: "5px 0 0 0" }}>
               🪑 {t('desk')} • 📋 {t('teacherDesk')}
@@ -194,12 +194,13 @@ function StudentList({ students, assignedStudentIds, addStudent, removeStudent, 
                 {t('noStudents')}
               </p>
             ) : (
-              <div style={{
+              <div className="student-scroll-container" style={{
                 maxHeight: "400px",
                 overflowY: "auto",
                 overflowX: "hidden",
                 paddingRight: "5px",
-                marginRight: "-5px"
+                marginRight: "-5px",
+                WebkitOverflowScrolling: "touch"
               }}>
                 <ul style={{ padding: 0, margin: 0 }}>
                   {students.map((student) => (
@@ -207,12 +208,13 @@ function StudentList({ students, assignedStudentIds, addStudent, removeStudent, 
                       key={student.id}
                       style={{
                         position: "relative",
-                        marginBottom: "5px"
+                        marginBottom: "2px"
                       }}
                     >
                       <DraggableStudent
                         student={student}
                         isAssigned={assignedStudentIds.has(student.id)}
+                        dragEnabled={dragEnabled}
                       />
                       <button
                         onClick={() => removeStudent(student.id)}

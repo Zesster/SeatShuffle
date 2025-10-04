@@ -42,4 +42,286 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* Force-landscape overlay: shown only in portrait */
+.force-landscape-overlay { display: none; }
+@media (orientation: portrait) {
+  .force-landscape-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #ffffff;
+    color: #2c3e50;
+    padding: 24px;
+  }
+  .force-landscape-overlay .box {
+    max-width: 480px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .force-landscape-overlay h2 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+  .force-landscape-overlay p {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  .force-landscape-overlay button {
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background: #2c3e50;
+    color: #fff;
+    cursor: pointer;
+  }
+}
+/* Independent panes: grid and sidebar */
+.main-content {
+  align-items: stretch !important; /* let children set their own heights */
+}
+.grid-scroll-container {
+  flex: 1 1 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 20px);
+}
+.student-list-sidebar {
+  flex: 0 0 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 20px);
+  width: clamp(220px, 24vw, 320px);
+  max-width: 320px;
+  min-width: 200px;
+}
+
+
+
+/* Mobile responsive utilities */
+@media (max-width: 768px) {
+  /* Enable scroll on mobile */
+  body {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Main container */
+  .app-container {
+    padding: 40px 5px 5px 5px !important;
+    min-width: min-content !important;
+  }
+
+  /* Main content */
+  .main-content {
+    gap: 5px !important;
+    align-items: flex-start !important;
+  }
+
+  /* Show student list sidebar on mobile */
+  .student-list-sidebar {
+    display: block !important;
+  }
+
+  /* Make seat cells smaller on mobile */
+  .seat-cell {
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 6px !important;
+  }
+
+  /* Adjust teacher desk icon size on mobile */
+  .seat-cell.teacher-desk {
+    font-size: 11px !important;
+  }
+
+  /* Adjust lock icon size on mobile */
+  .seat-cell .lock-icon {
+    font-size: 5px !important;
+    top: 0px !important;
+    right: 0px !important;
+  }
+
+  /* Adjust delete button size on mobile */
+  .seat-cell .delete-btn {
+    font-size: 5px !important;
+    padding: 1px 2px !important;
+  }
+
+  /* Minimal grid gap and padding on mobile */
+  .seat-grid {
+    gap: 0px !important;
+    padding: 2px !important;
+  }
+
+  /* Override grid template columns to use smaller cells */
+  .seat-grid[style*="gridTemplateColumns"] {
+    grid-template-columns: repeat(var(--grid-cols, 4), 25px) !important;
+  }
+
+  /* Smaller hamburger menu button on mobile */
+  .config-menu-button {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 16px !important;
+    top: 5px !important;
+    left: 5px !important;
+    z-index: 1000 !important;
+  }
+
+  /* Much smaller config menu panel on mobile */
+  .config-menu-panel {
+    width: 90% !important;
+    max-width: 250px !important;
+    font-size: 10px !important;
+    padding: 50px 12px 12px 12px !important;
+  }
+
+  /* Smaller headings in config menu */
+  .config-menu-panel h3 {
+    font-size: 10px !important;
+    margin-bottom: 5px !important;
+    margin-top: 0 !important;
+  }
+
+  /* Smaller inputs in config menu */
+  .config-menu-panel input,
+  .config-menu-panel button {
+    font-size: 9px !important;
+    padding: 4px 6px !important;
+  }
+
+  /* Smaller logo in config menu */
+  .config-menu-logo {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Smaller header in config menu */
+  .config-menu-header {
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+    gap: 6px !important;
+  }
+
+  .config-menu-header h2 {
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+  }
+
+  .config-menu-header p {
+    font-size: 8px !important;
+    margin-top: 2px !important;
+  }
+
+  /* Compact sections in config menu */
+  .config-section {
+    margin-bottom: 8px !important;
+    padding: 8px !important;
+    border-radius: 5px !important;
+  }
+
+  /* Smaller labels */
+  .config-label {
+    font-size: 9px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Compact saved layouts list */
+  .config-menu-panel ul {
+    margin: 5px 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .config-menu-panel li {
+    padding: 4px !important;
+    margin-bottom: 2px !important;
+    font-size: 9px !important;
+  }
+
+  /* Smaller buttons in saved layouts */
+  .config-menu-panel li button {
+    font-size: 8px !important;
+    padding: 2px 5px !important;
+  /* Independent panes on mobile too */
+  .grid-scroll-container {
+    max-height: calc(100vh - 60px) !important;
+    overflow: auto !important;
+  }
+  .student-list-sidebar {
+    max-height: calc(100vh - 60px) !important;
+    overflow: auto !important;
+  }
+
+    margin-left: 2px !important;
+  }
+
+  /* Compact language selector */
+  .config-menu-panel .language-selector button {
+    font-size: 9px !important;
+    padding: 4px 6px !important;
+  }
+
+  /* Smaller student list sidebar on mobile */
+  .student-list-sidebar {
+    width: auto !important;
+    max-width: 120px !important;
+    font-size: 8px !important;
+    max-height: calc(100vh - 60px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Remove touch-action restrictions - let TouchBackend handle it */
+
+  /* Compact student list buttons */
+  .student-list-sidebar button {
+    font-size: 7px !important;
+    padding: 3px 5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Smaller student items */
+  .student-list-sidebar .draggable-student {
+    font-size: 7px !important;
+    padding: 3px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Compact expandable sections in sidebar */
+  .student-list-sidebar > div {
+    margin-bottom: 5px !important;
+  }
+
+  /* Smaller section headers in sidebar */
+  .student-list-sidebar h3,
+  .student-list-sidebar button[style*="uppercase"] {
+    font-size: 8px !important;
+    padding: 4px !important;
+  }
+
+  /* Smaller input fields */
+  .student-list-sidebar input {
+    font-size: 7px !important;
+    padding: 3px !important;
+  }
+
+  /* Reduce scrollable container height */
+  .student-scroll-container {
+    max-height: 100px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
 

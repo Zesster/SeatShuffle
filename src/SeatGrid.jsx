@@ -1,17 +1,21 @@
 import React from "react";
 import Seat from "./Seat";
 
-function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock, addTeacherDeskToGrid, removeTeacherDeskFromGrid, removeStudentFromSeat }) {
+function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock, addTeacherDeskToGrid, removeTeacherDeskFromGrid, removeStudentFromSeat, dragEnabled = true }) {
 
   return (
     <div
+      className="seat-grid"
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${gridConfig.cols}, 80px)`,
-        gap: "10px",
-        padding: "20px",
+        columnGap: "4px",
+        rowGap: "0px",
+        padding: "12px",
         background: "#fafafa",
         borderRadius: "8px",
+        '--grid-cols': gridConfig.cols,
+        width: "max-content",
       }}
     >
       {seats.map((seat) => (
@@ -26,6 +30,7 @@ function SeatGrid({ seats, gridConfig, swapSeats, assignStudentToSeat, addDeskTo
           addTeacherDeskToGrid={addTeacherDeskToGrid}
           removeTeacherDeskFromGrid={removeTeacherDeskFromGrid}
           removeStudentFromSeat={removeStudentFromSeat}
+          dragEnabled={dragEnabled}
         />
       ))}
     </div>

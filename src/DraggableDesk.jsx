@@ -2,14 +2,15 @@ import React from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./Seat";
 
-function DraggableDesk() {
+function DraggableDesk({ dragEnabled = true }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.DESK,
     item: { type: ItemTypes.DESK, isNew: true },
+    canDrag: dragEnabled,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  }));
+  }), [dragEnabled]);
 
   return (
     <div

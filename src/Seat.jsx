@@ -8,9 +8,10 @@ export const ItemTypes = {
   TEACHER_DESK: "teacher_desk",
 };
 
-function Seat({ seat, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock, addTeacherDeskToGrid, removeTeacherDeskFromGrid, removeStudentFromSeat }) {
+function Seat({ seat, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskFromGrid, toggleLock, addTeacherDeskToGrid, removeTeacherDeskFromGrid, removeStudentFromSeat, dragEnabled = true }) {
   // Only allow dragging if there's a student or if it's a desk/teacher desk, and not locked
-  const canDrag = (seat.student || seat.hasDesk || seat.hasTeacherDesk) && !seat.isLocked;
+  const baseCanDrag = (seat.student || seat.hasDesk || seat.hasTeacherDesk) && !seat.isLocked;
+  const canDrag = dragEnabled && baseCanDrag;
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: seat.hasTeacherDesk ? ItemTypes.TEACHER_DESK : (seat.student ? ItemTypes.SEAT : ItemTypes.DESK),
@@ -139,6 +140,7 @@ function Seat({ seat, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskF
     <div
       ref={(node) => drag(drop(node))}
       onClick={handleClick}
+      className={`seat-cell ${seat.hasTeacherDesk ? 'teacher-desk' : ''}`}
       style={{
         width: "80px",
         height: "80px",
@@ -163,7 +165,7 @@ function Seat({ seat, swapSeats, assignStudentToSeat, addDeskToGrid, removeDeskF
       }
     >
       {seat.isLocked && (
-        <div style={{
+        <div className="lock-icon" style={{
           position: "absolute",
           top: "2px",
           right: "2px",

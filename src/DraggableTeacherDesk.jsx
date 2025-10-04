@@ -1,14 +1,15 @@
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./Seat";
 
-function DraggableTeacherDesk() {
+function DraggableTeacherDesk({ dragEnabled = true }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.TEACHER_DESK,
     item: { type: ItemTypes.TEACHER_DESK, isNew: true },
+    canDrag: dragEnabled,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-  }));
+  }), [dragEnabled]);
 
   return (
     <div
@@ -26,6 +27,7 @@ function DraggableTeacherDesk() {
         justifyContent: "center",
         boxShadow: "0 2px 6px rgba(139, 69, 19, 0.4)",
         transition: "all 0.3s ease",
+        touchAction: dragEnabled ? "none" : "auto",
       }}
       onMouseEnter={(e) => {
         e.target.style.transform = "scale(1.05)";

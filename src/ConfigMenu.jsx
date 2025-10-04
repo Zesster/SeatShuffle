@@ -77,6 +77,7 @@ function ConfigMenu({
     <div>
       <button
         onClick={() => setOpen(!open)}
+        className="config-menu-button"
         style={{
           position: "fixed",
           top: "20px",
@@ -127,6 +128,7 @@ function ConfigMenu({
 
           {/* Panel */}
           <div
+            className="config-menu-panel"
             style={{
               position: "fixed",
               top: 0,
@@ -165,7 +167,7 @@ function ConfigMenu({
             </style>
 
             {/* Header with Logo */}
-            <div style={{
+            <div className="config-menu-header" style={{
               display: "flex",
               alignItems: "center",
               gap: "12px",
@@ -176,6 +178,7 @@ function ConfigMenu({
               <img
                 src="/logo.png"
                 alt="Logo"
+                className="config-menu-logo"
                 style={{
                   width: "80px",
                   height: "80px",
@@ -193,7 +196,7 @@ function ConfigMenu({
             </div>
 
             {/* Grid Configuration Section */}
-            <div style={{
+            <div className="config-section" style={{
               background: "#f8f9fa",
               padding: "20px",
               borderRadius: "8px",
@@ -204,7 +207,7 @@ function ConfigMenu({
                 {t('gridDimensions')}
               </h3>
               <div style={{ marginBottom: "15px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
+                <label className="config-label" style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
                   {t('rows')}:
                 </label>
                 <input
@@ -225,7 +228,7 @@ function ConfigMenu({
                 />
               </div>
               <div style={{ marginBottom: "15px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
+                <label className="config-label" style={{ display: "block", marginBottom: "8px", fontSize: "13px", color: "#495057", fontWeight: "500" }}>
                   {t('columns')}:
                 </label>
                 <input
@@ -267,7 +270,7 @@ function ConfigMenu({
             </div>
 
             {/* Saved Layouts Section */}
-            <div style={{
+            <div className="config-section" style={{
               background: "#f8f9fa",
               padding: "20px",
               borderRadius: "8px",
@@ -460,7 +463,7 @@ function ConfigMenu({
             </div>
 
             {/* Language Selector */}
-            <div style={{
+            <div className="config-section" style={{
               background: "#f8f9fa",
               padding: "20px",
               borderRadius: "8px",
@@ -470,7 +473,7 @@ function ConfigMenu({
               <h3 style={{ marginTop: 0, fontSize: "14px", marginBottom: "15px", fontWeight: "600", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                 {t('language')}
               </h3>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="language-selector" style={{ display: "flex", gap: "8px" }}>
                 <button
                   onClick={() => changeLanguage('it')}
                   style={{
@@ -529,7 +532,7 @@ function ConfigMenu({
             </div>
 
             {/* Danger Zone */}
-            <div style={{
+            <div className="config-section" style={{
               background: "#fff5f5",
               padding: "20px",
               borderRadius: "8px",
