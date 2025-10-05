@@ -8,7 +8,7 @@ import StudentList from "./StudentList";
 import ConfigMenu from "./ConfigMenu";
 import { getCurrentLanguage, saveLanguage, getTranslation } from "./i18n";
 
-// Custom MultiBackend configuration
+// Custom MultiBackend configuration basic
 const HTML5toTouch = {
   backends: [
     {
