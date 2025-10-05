@@ -42,48 +42,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-/* Force-landscape overlay: shown only in portrait */
-.force-landscape-overlay { display: none; }
-@media (orientation: portrait) {
-  .force-landscape-overlay {
-    display: flex;
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: #ffffff;
-    color: #2c3e50;
-    padding: 24px;
-  }
-  .force-landscape-overlay .box {
-    max-width: 480px;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    padding: 16px 18px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    background: #fff;
-  }
-  .force-landscape-overlay h2 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-  }
-  .force-landscape-overlay p {
-    margin: 0 0 12px 0;
-    font-size: 12px;
-    color: #6c757d;
-  }
-  .force-landscape-overlay button {
-    padding: 8px 12px;
-    font-size: 12px;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
-    background: #2c3e50;
-    color: #fff;
-    cursor: pointer;
-  }
-}
 /* Independent panes: grid and sidebar */
 .main-content {
   align-items: stretch !important; /* let children set their own heights */
@@ -131,49 +89,19 @@ code {
     display: block !important;
   }
 
-  /* Make seat cells smaller on mobile */
-  .seat-cell {
-    width: 25px !important;
-    height: 25px !important;
-    font-size: 6px !important;
-  }
 
-  /* Adjust teacher desk icon size on mobile */
-  .seat-cell.teacher-desk {
-    font-size: 11px !important;
-  }
 
-  /* Adjust lock icon size on mobile */
-  .seat-cell .lock-icon {
-    font-size: 5px !important;
-    top: 0px !important;
-    right: 0px !important;
-  }
 
-  /* Adjust delete button size on mobile */
-  .seat-cell .delete-btn {
-    font-size: 5px !important;
-    padding: 1px 2px !important;
-  }
 
-  /* Minimal grid gap and padding on mobile */
-  .seat-grid {
-    gap: 0px !important;
-    padding: 2px !important;
-  }
 
-  /* Override grid template columns to use smaller cells */
-  .seat-grid[style*="gridTemplateColumns"] {
-    grid-template-columns: repeat(var(--grid-cols, 4), 25px) !important;
-  }
 
-  /* Smaller hamburger menu button on mobile */
+  /* Mobile: keep hamburger big enough for touch */
   .config-menu-button {
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 16px !important;
-    top: 2px !important;
-    left: 2px !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 22px !important;
+    top: 10px !important; /* align with desktop spacing */
+    left: 10px !important;
     z-index: 1000 !important;
   }
 

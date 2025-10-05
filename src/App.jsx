@@ -413,37 +413,10 @@ function App() {
     }
   };
 
-  // Try to lock landscape orientation (where supported)
-  const lockLandscape = async () => {
-    try {
-      // Fullscreen often required before locking
-      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-        await document.documentElement.requestFullscreen();
-      }
-      if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-        await window.screen.orientation.lock('landscape');
-        alert('Orientamento bloccato in orizzontale (se supportato).');
-      } else {
-        alert('Il blocco orientamento non è supportato su questo browser.');
-      }
-    } catch (e) {
-      console.warn('Orientation lock failed:', e);
-      alert('Impossibile bloccare l\'orientamento. Ruota manualmente il dispositivo.');
-    }
-  };
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
       <div className="app-container" style={{ padding: "10px", fontFamily: "Arial", position: "relative" }}>
-        {/* Portrait overlay to force landscape usage */}
-        <div className="force-landscape-overlay">
-          <div className="box">
-            <h2>Ruota il dispositivo</h2>
-            <p>Questa app è ottimizzata per l\'uso in orizzontale. Ruota il telefono oppure prova a bloccare l\'orientamento.</p>
-            <button onClick={lockLandscape}>Tenta blocco orizzontale</button>
-          </div>
-        </div>
-
         <ConfigMenu
           gridConfig={gridConfig}
           setGridConfig={setGridConfig}
